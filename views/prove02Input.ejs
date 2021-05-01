@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+        <% include ./header.ejs %>
+    </head>
+
+    <body>
+        <div class="container text-center">
+            <h3 style="margin: 2vw 3vw 1vw 3vw;">Please enter a book and summary.</h3>
+            <form action="./outputData" method="POST">
+                <input type="text" name="bookTitle" placeholder="Title" style="margin: 1vw 3vw 1vw 3vw;">
+                <br>
+                <textarea name="summary" rows="10" cols="60" style="resize: none; margin: 1vw 3vw 2.5vw 3vw;" placeholder="Summary"></textarea>
+                <br>
+                <button type="submit" style="font-size: 2em; border-radius: 10px">Save</button>
+            </form>
+        </div>
+    </body>
+</html>
