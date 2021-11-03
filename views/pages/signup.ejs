@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../includes/header.ejs%>
+    </head>
+
+    <body>
+        <% include ../includes/banner.ejs%>
+        <% include ../includes/error.ejs%>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <form class="loginform"action="/signup" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfT %>">
+                <label><b>Name:</b></label>
+                <input class="form-control" type="text" name="newName"
+                    <% if (previousForm.name == "signup" && previousForm.newName) { %>value="<%= previousForm.newName %>"<% } %>>
+                <label><b>Username:</b></label>
+                <input class="form-control" type="text" name="newUsername"
+                    <% if (previousForm.name == "signup" && previousForm.newUsername) { %>value="<%= previousForm.newUsername %>"<% } %>>
+                <label><b>Email:</b></label>
+                <input class="form-control" type="email" name="userEmail"
+                    <% if (previousForm.name == "signup" && previousForm.userEmail) { %>value="<%= previousForm.userEmail %>"<% } %>>
+                <label><b>Password:</b></label>
+                <input class="form-control" type="password" name="userPass"
+                    <% if (previousForm.name == "signup" && previousForm.userPass) { %>value="<%= previousForm.userPass %>"<% } %>>
+                <input type="submit" value="Sign-Up" class="btn btn-dark" style="margin-top: 1em;">
+            </form>
+        </div>
+    </body>
+</html>

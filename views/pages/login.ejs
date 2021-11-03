@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <% include ../includes/header.ejs%>
+    </head>
+
+    <body>
+        <% include ../includes/banner.ejs%>
+        <% include ../includes/error.ejs%>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <form class="loginform" action="/login" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfT %>">
+                <label><b>Username or Email:</b></label>
+                <input class="form-control" type="text" name="usernameOrEmail"
+                    <% if (previousForm.name == "login" && previousForm.usernameOrEmail) { %>value="<%= previousForm.usernameOrEmail %>"<% } %>>
+                <label><b>Password:</b></label>
+                <input class="form-control" type="password" name="userPass"
+                    <% if (previousForm.name == "login" && previousForm.userPass) { %>value="<%= previousForm.userPass %>"<% } %>>
+                <input type="submit" value="Log-In" class="btn btn-dark" style="margin-top: 1em;">
+            </form>
+        </div>
+    </body>
+</html>
