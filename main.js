@@ -69,6 +69,10 @@ app.set("views", path.join(__dirname, "views"))
             req.session.foundProducts = [];
         }
 
+        if (!req.session.searchPage) {
+            req.session.searchPage = 1;
+        }
+
         if (req.session.user) {
         User.findById(req.session.user._id)
             .then(user => {

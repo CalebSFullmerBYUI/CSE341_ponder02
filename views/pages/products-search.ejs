@@ -17,6 +17,44 @@
             <% for (product of products) {%>
                 <% include ../includes/product.ejs %>
             <% } %>
+
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div>
+                    <form action="/change-search-page" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfT %>">
+                        <input type="hidden" name="pageChange" value="first">
+                        <input type="submit" value="First Page" class="btn btn-dark" style="font-size: 20px; width: 100%;">
+                    </form>
+                </div>
+
+                <div>
+                    <form action="/change-search-page" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfT %>">
+                        <input type="hidden" name="pageChange" value="previous">
+                        <input type="submit" value="Previous Page" class="btn btn-dark" style="font-size: 20px; width: 100%;">
+                    </form>
+                </div>
+
+                <div>
+                    <span class="btn btn-dark" style="font-size: 20px; width: 100%;"><%= currentPage %></span>
+                </div>
+
+                <div>
+                    <form action="/change-search-page" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfT %>">
+                        <input type="hidden" name="pageChange" value="next">
+                        <input type="submit" value="Next Page" class="btn btn-dark" style="font-size: 20px; width: 100%;">
+                    </form>
+                </div>
+
+                <div>
+                    <form action="/change-search-page" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfT %>">
+                        <input type="hidden" name="pageChange" value="last">
+                        <input type="submit" value="Last Page" class="btn btn-dark" style="font-size: 20px; width: 100%;">
+                    </form>
+                </div>
+            </div>
         </div>
     </body>
 </html>

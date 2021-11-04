@@ -4,6 +4,8 @@ const productsControl = require("../controllers/products-control");
 const usersControl = require("../controllers/users-control");
 const Product = require("../models/product");
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 
 // https://github.com/validatorjs/validator.js
 
@@ -151,6 +153,8 @@ router.get("/search", productsControl.loadSearchPage);
 router.post("/search", 
         check("searchQuery").replace(['<', '>', '"'], ''), // Remove >, <, and " from search string.
     productsControl.searchProducts);
+
+router.post("/change-search-page", productsControl.changePage);
 
 router.get("/add-product", productsControl.loadEditPage);
 

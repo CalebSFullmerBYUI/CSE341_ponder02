@@ -16,6 +16,7 @@ const makeProductId = (productName) => {
 exports.loadSearchPage = (req, res, next) => {
     req.session.previousSearch = req.url;
     if (req.session.foundProducts == 0 && req.session.productSearch == "") {
+        req.session.searchPage = 1;
         Product.find().then(products => {
             res.render("pages/products-search", {
                 title: "Search",
@@ -26,6 +27,7 @@ exports.loadSearchPage = (req, res, next) => {
                 isAdmin: (req.user && req.user.isAdmin),
                 errorMessage: req.flash("generalError"),
                 productSearch: req.session.productSearch,
+                currentPage: req.session.searchPage,
                 csrfT: req.csrfToken()
             });
         }).catch(err => {
@@ -43,6 +45,7 @@ exports.loadSearchPage = (req, res, next) => {
             isAdmin: (req.user && req.user.isAdmin),
             errorMessage: req.flash("generalError"),
             productSearch: req.session.productSearch,
+            currentPage: req.session.searchPage,
             csrfT: req.csrfToken()
         });
     }
@@ -229,14 +232,25 @@ exports.searchProducts = (req, res, next) => {
 
     if (!errors.isEmpty()) {
         // There were input validation errors.
-        req.flash("loginError", errors.array()[0].msg);
+        req.flash("generalError", errors.array()[0].msg);
         res.redirect(req.session.previousSearch);
     } else {
         req.session.productSearch = req.body.searchQuery.trim();
         req.session.foundProducts = [];
+        req.session.searchPage = 1;
+
+        /*
+        This query litterally has no right not to work.
+        https://docs.mongodb.com/manual/tutorial/query-arrays/
+
+        {$or:
+            [{name: {$regex: req.body.searchQuery.trim(), $options: 'i'}},
+            {tags: req.body.searchQuery.trim()}]
+        }*/
 
         Product.find({name: {$regex: req.body.searchQuery.trim(), $options: 'i'}
-        }).then(products => {
+        }).skip((req.session.searchPage - 1) * 10).limit(10)
+        .then(products => {
             req.session.foundProducts = products;
             res.redirect("/search");
         }).catch(err => {
@@ -245,4 +259,39 @@ exports.searchProducts = (req, res, next) => {
             console.log("Issue running product search. " + err );
         });
     }
+}
+
+
+exports.changePage = (req, res, next) => {
+    Product.find({name: {$regex: req.session.productSearch, $options: 'i'}}).count().then(numProducts => {
+        console.log(req.session.searchPage);
+        if (req.body.pageChange == "first") {
+            req.session.searchPage = 1;
+        } else if (req.body.pageChange == "previous") {
+            if (req.session.searchPage > 1) {
+                req.session.searchPage = req.session.searchPage - 1;
+            }
+        } else if (req.body.pageChange == "next") {
+            if (req.session.searchPage * 10 < numProducts) {
+                req.session.searchPage = req.session.searchPage + 1;
+            }
+        } else {
+            if (numProducts % 10 != 0) {
+                req.session.searchPage = Math.floor((numProducts / 10)) + 1;
+            } else {
+                req.session.searchPage = Math.floor((numProducts / 10));
+            }
+        }
+
+        Product.find({name: {$regex: req.session.productSearch, $options: 'i'}
+        }).skip((req.session.searchPage - 1) * 10).limit(10)
+        .then(products => {
+            req.session.foundProducts = products;
+            res.redirect("/search");
+        }).catch(err => {
+            req.flash("generalError", "Issue performing search.");
+            res.redirect(req.session.previousSearch);
+            console.log("Issue running product search. " + err );
+        });
+    });
 }
